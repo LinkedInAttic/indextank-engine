@@ -38,7 +38,7 @@ target/engine-1.0.0-jar-with-dependencies.jar
 
 Main class: com.flaptor.indextank.index.IndexEngine
 
-VM args: -verbose:gc -Xloggc:logs/gc.log -XX:+PrintGCTimeStamps -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Dorg.apache.lucene.FSDirectory.class=org.apache.lucene.store.MMapDirectory -Dapp=INDEX-ENGINE-dgmqn -Xmx600M
+VM args: -verbose:gc -Xloggc:logs/gc.log -XX:+PrintGCTimeStamps -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Dorg.apache.lucene.FSDirectory.class=org.apache.lucene.store.MMapDirectory -Xmx600M
 
 Program args: --facets --rti-size 500 --conf-file sample-engine-config --port 20220 --environment-prefix TEST --recover --dir index --snippets --suggest documents --boosts 3 --index-code dgmqn --functions 0:-age
 

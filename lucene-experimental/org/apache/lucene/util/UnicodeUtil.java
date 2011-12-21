@@ -132,7 +132,7 @@ public final class UnicodeUtil {
     // Pre-allocate for worst case 4-for-1
     final int maxLen = length * 4;
     if (out.length < maxLen)
-      out = result.bytes = new byte[ArrayUtil.oversize(maxLen, 1)];
+      out = result.bytes = new byte[ArrayUtil2.oversize(maxLen, 1)];
     result.offset = 0;
 
     while(i < end) {
@@ -569,7 +569,7 @@ public final class UnicodeUtil {
    */
   public static void UTF8toUTF16(byte[] utf8, int offset, int length, CharsRef chars) {
     int out_offset = chars.offset = 0;
-    final char[] out = chars.chars =  ArrayUtil.grow(chars.chars, length);
+    final char[] out = chars.chars =  ArrayUtil2.grow(chars.chars, length);
     final int limit = offset + length;
     while (offset < limit) {
       int b = utf8[offset++]&0xff;

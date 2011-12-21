@@ -19,7 +19,7 @@ package org.apache.lucene.util.automaton;
 
 import java.util.TreeMap;
 import java.util.Map;
-import org.apache.lucene.util.ArrayUtil;
+import org.apache.lucene.util.ArrayUtil2;
 import org.apache.lucene.util.RamUsageEstimator;
 
 // Just holds a set of int[] states, plus a corresponding
@@ -60,8 +60,8 @@ final class SortedIntSet {
     }
 
     if (upto == values.length) {
-      values = ArrayUtil.grow(values, 1+upto);
-      counts = ArrayUtil.grow(counts, 1+upto);
+      values = ArrayUtil2.grow(values, 1+upto);
+      counts = ArrayUtil2.grow(counts, 1+upto);
     }
 
     for(int i=0;i<upto;i++) {
@@ -135,7 +135,7 @@ final class SortedIntSet {
   public void computeHash() {
     if (useTreeMap) {
       if (map.size() > values.length) {
-        final int size = ArrayUtil.oversize(map.size(), RamUsageEstimator.NUM_BYTES_INT);
+        final int size = ArrayUtil2.oversize(map.size(), RamUsageEstimator.NUM_BYTES_INT);
         values = new int[size];
         counts = new int[size];
       }

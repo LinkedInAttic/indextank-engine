@@ -113,7 +113,7 @@ public final class IntsRef implements Comparable<IntsRef> {
     if (ints == null) {
       ints = new int[other.length];
     } else {
-      ints = ArrayUtil.grow(ints, other.length);
+      ints = ArrayUtil2.grow(ints, other.length);
     }
     System.arraycopy(other.ints, other.offset, ints, 0, other.length);
     length = other.length;
@@ -122,7 +122,7 @@ public final class IntsRef implements Comparable<IntsRef> {
 
   public void grow(int newLength) {
     if (ints.length < newLength) {
-      ints = ArrayUtil.grow(ints, newLength);
+      ints = ArrayUtil2.grow(ints, newLength);
     }
   }
 

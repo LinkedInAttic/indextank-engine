@@ -26,9 +26,9 @@ import java.util.Comparator;
  * @lucene.internal
  */
 
-public final class ArrayUtil {
+public final class ArrayUtil2 {
 
-  private ArrayUtil() {} // no instance
+  private ArrayUtil2() {} // no instance
 
   /*
      Begin Apache Harmony code

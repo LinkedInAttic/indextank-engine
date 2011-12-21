@@ -172,7 +172,7 @@ public final class CharsRef implements Comparable<CharsRef>, CharSequence {
     if (chars == null) {
       chars = new char[other.length];
     } else {
-      chars = ArrayUtil.grow(chars, other.length);
+      chars = ArrayUtil2.grow(chars, other.length);
     }
     System.arraycopy(other.chars, other.offset, chars, 0, other.length);
     length = other.length;
@@ -181,7 +181,7 @@ public final class CharsRef implements Comparable<CharsRef>, CharSequence {
 
   public void grow(int newLength) {
     if (chars.length < newLength) {
-      chars = ArrayUtil.grow(chars, newLength);
+      chars = ArrayUtil2.grow(chars, newLength);
     }
   }
 

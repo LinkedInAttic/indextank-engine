@@ -29,7 +29,7 @@
 
 package org.apache.lucene.util.automaton;
 
-import org.apache.lucene.util.ArrayUtil;
+import org.apache.lucene.util.ArrayUtil2;
 import org.apache.lucene.util.RamUsageEstimator;
 
 import java.util.ArrayList;
@@ -459,7 +459,7 @@ final public class BasicOperations {
 
     public void add(Transition t) {
       if (transitions.length == count) {
-        Transition[] newArray = new Transition[ArrayUtil.oversize(1+count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+        Transition[] newArray = new Transition[ArrayUtil2.oversize(1+count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
         System.arraycopy(transitions, 0, newArray, 0, count);
         transitions = newArray;
       }
@@ -505,7 +505,7 @@ final public class BasicOperations {
     private PointTransitions next(int point) {
       // 1st time we are seeing this point
       if (count == points.length) {
-        final PointTransitions[] newArray = new PointTransitions[ArrayUtil.oversize(1+count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+        final PointTransitions[] newArray = new PointTransitions[ArrayUtil2.oversize(1+count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
         System.arraycopy(points, 0, newArray, 0, count);
         points = newArray;
       }
@@ -557,7 +557,7 @@ final public class BasicOperations {
 
     public void sort() {
       // mergesort seems to perform better on already sorted arrays:
-      if (count > 1) ArrayUtil.mergeSort(points, 0, count);
+      if (count > 1) ArrayUtil2.mergeSort(points, 0, count);
     }
 
     public void add(Transition t) {
@@ -653,7 +653,7 @@ final public class BasicOperations {
             final SortedIntSet.FrozenIntSet p = statesSet.freeze(q);
             worklist.add(p);
             if (newStateUpto == newStatesArray.length) {
-              final State[] newArray = new State[ArrayUtil.oversize(1+newStateUpto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+              final State[] newArray = new State[ArrayUtil2.oversize(1+newStateUpto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
               System.arraycopy(newStatesArray, 0, newArray, 0, newStateUpto);
               newStatesArray = newArray;
             }

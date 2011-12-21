@@ -353,7 +353,7 @@ public final class BytesRef implements Comparable<BytesRef> {
   }
 
   public void grow(int newLength) {
-    bytes = ArrayUtil.grow(bytes, newLength);
+    bytes = ArrayUtil2.grow(bytes, newLength);
   }
 
   /** Unsigned byte order comparison */

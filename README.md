@@ -1,7 +1,8 @@
 About IndexTank Engine
 ======================
 
-TBD
+This project contains IndexTank (http://indextank.com) search engine implementation.
+Includes features like variables (boosts), categories (facets), faceted search, snippeting, custom scoring functions, suggest, and autocomplete.
 
 ### Homepage:
 
@@ -23,7 +24,7 @@ artifactId: engine
 
 version: 1.0.0
 
-### Library generation:
+### Package generation:
 
 Build a single jar containing all dependencies by:
 

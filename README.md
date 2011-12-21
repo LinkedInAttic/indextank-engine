@@ -13,7 +13,7 @@ Apache Public License (APL) 2.0
 
 ### Artifacts:
 
-1. engine.jar <-- core library
+1. engine-1.0.0.jar <-- core library
 
 ### Maven:
 
@@ -23,13 +23,23 @@ artifactId: engine
 
 version: 1.0.0
 
+### Library generation:
+
+Build a single jar containing all dependencies by:
+
+mvn assembly:single
+
+This will create a single file in:
+
+target/engine-1.0.0-jar-with-dependencies.jar
+
 ### Code Examples:
 
 TBD
 
 ### Eclipse:
 
-Set up Eclipse for Cleo by executing the command below:
+Set up Eclipse for this project by executing the command below:
 
 mvn eclipse:eclipse
 

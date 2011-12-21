@@ -28,7 +28,7 @@ version: 1.0.0
 
 Build a single jar containing all dependencies by:
 
-mvn assembly:single
+mvn package assembly:single
 
 This will create a single file in:
 

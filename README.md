@@ -67,6 +67,7 @@ Program args:
     --facets --rti-size 500 --conf-file sample-engine-config --port 20220 --environment-prefix TEST --recover --dir index --snippets --suggest documents --boosts 3 --index-code dgmqn --functions 0:-age
 
 Sample engine configuration file contents:
+
     {
     "max_variables": 3, 
     "functions": {"0": "-age"}, 

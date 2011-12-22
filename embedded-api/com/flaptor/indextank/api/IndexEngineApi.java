@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2011 LinkedIn, Inc
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.flaptor.indextank.api;
 
 import static java.lang.Double.parseDouble;
@@ -36,7 +52,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-public class EngineApi {
+public class IndexEngineApi {
+
+    protected final EmbeddedIndexEngine engine;
+
+    public IndexEngineApi(EmbeddedIndexEngine engine) {
+        this.engine = engine;
+    }
 
     public SearchResults search(String queryStr, 
             int start, int len, 
@@ -46,7 +68,7 @@ public class EngineApi {
             List<RangeFilter> variableRangeFilters, 
             List<RangeFilter> functionRangeFilters, 
             Map<String,String> extraParameters) throws IndextankException, InvalidQueryException, MissingQueryVariableException {
-        DocumentSearcher searcher = Configuration.engine.getSearcher();
+        DocumentSearcher searcher = engine.getSearcher();
         try { 
             Query query = generateQuery(queryStr, start, len, 
                     QueryVariablesImpl.fromMap(queryVariables), 
@@ -74,9 +96,9 @@ public class EngineApi {
             throw ite;
         }
     }
-    
+
     private VariablesRangeFilter convertToVariableRangeFilter(List<RangeFilter> rangeFilters) {
-        DynamicDataManager dynamicDataManager = Configuration.engine.getDynamicDataManager();
+        DynamicDataManager dynamicDataManager = engine.getDynamicDataManager();
         Multimap<Integer, Pair<Float, Float>> filters = HashMultimap.create();
         for (RangeFilter filter : rangeFilters) {
             filters.put(filter.get_key(), new Pair<Float, Float>(filter.is_no_floor() ? null : (float)filter.get_floor(), filter.is_no_ceil() ? null : (float)filter.get_ceil()));
@@ -86,8 +108,8 @@ public class EngineApi {
     }
 
     private FunctionRangeFilter convertToFunctionRangeFilter(List<RangeFilter> rangeFilters) {
-        DynamicDataManager dynamicDataManager = Configuration.engine.getDynamicDataManager();
-        BoostsScorer scorer = Configuration.engine.getScorer();
+        DynamicDataManager dynamicDataManager = engine.getDynamicDataManager();
+        BoostsScorer scorer = engine.getScorer();
         Multimap<Integer, Pair<Float, Float>> filters = HashMultimap.create();
         for (RangeFilter filter : rangeFilters) {
             filters.put(filter.get_key(), new Pair<Float, Float>(filter.is_no_floor() ? null : (float)filter.get_floor(), filter.is_no_ceil() ? null : (float)filter.get_ceil()));
@@ -97,7 +119,7 @@ public class EngineApi {
     }
 
     private Query generateQuery(String str, int start, int len, QueryVariables vars, Multimap<String, String> facetsFilter, MatchFilter rangeFilters) throws ParseException {
-        IndexEngineParser parser = Configuration.engine.getParser();
+        IndexEngineParser parser = engine.getParser();
         return new Query(parser.parseQuery(str), str, vars, facetsFilter, rangeFilters);
     }
 
@@ -111,7 +133,7 @@ public class EngineApi {
     }
     
     public void putDocument(String id, JSONObject fields, JSONObject variables, JSONObject categories) {
-        BoostingIndexer indexer = Configuration.engine.getIndexer();
+        BoostingIndexer indexer = engine.getIndexer();
         indexer.add(id, new Document(prepareProperties(fields)), Timestamp.inSeconds(), prepareBoosts(variables));
         indexer.updateCategories(id, prepareProperties(categories));
     }

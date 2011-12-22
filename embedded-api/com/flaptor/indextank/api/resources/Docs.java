@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2011 LinkedIn, Inc
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.flaptor.indextank.api.resources;
 
 import java.io.IOException;
@@ -8,7 +24,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
-import com.flaptor.indextank.api.EngineApi;
+import com.flaptor.indextank.api.IndexEngineApi;
 import com.ghosthack.turismo.action.Action;
 
 public class Docs extends Action {
@@ -17,12 +33,13 @@ public class Docs extends Action {
      * @see java.lang.Runnable#run()
      */
     public void run() {
+        IndexEngineApi api = (IndexEngineApi) ctx().getAttribute("api");
         try {
             Object parse = JSONValue.parseWithException(req().getReader());
             if(parse instanceof JSONObject) { // 200, 400, 404, 409, 503
                 JSONObject jo = (JSONObject) parse;
                 try {
-                    putDocument(jo);
+                    putDocument(api, jo);
                     res().setStatus(200);
                     return;
                     
@@ -46,7 +63,7 @@ public class Docs extends Action {
                     JSONObject jo = (JSONObject) o;
                     JSONObject status = new JSONObject();
                     try {
-                        putDocument(jo);
+                        putDocument(api, jo);
                         status.put("added", true);
                     } catch(Exception e) {
                         status.put("added", false);
@@ -69,7 +86,7 @@ public class Docs extends Action {
         print("Service unavailable"); // TODO: descriptive error msg
     }
 
-    private void putDocument(JSONObject jo) {
+    private void putDocument(IndexEngineApi api, JSONObject jo) {
         String docid = String.valueOf(jo.get("docid")); // TODO: empty & < 1024b
         JSONObject fields = (JSONObject) jo.get("fields"); // TODO: sum(field.value) < 100Kb
         JSONObject variables = (JSONObject) jo.get("variables");
@@ -90,8 +107,6 @@ public class Docs extends Action {
         }
         return true;
     }
-
-    private final EngineApi api = new EngineApi();
 
     private static final Logger LOG = Logger.getLogger(Docs.class.getName());
     private static final boolean LOG_ENABLED = true;

@@ -93,7 +93,7 @@ package org.apache.lucene.util;
  * @lucene.internal
  */
 
-public final class UnicodeUtil {
+public final class UnicodeUtil2 {
   
   /** A binary term consisting of a number of 0xff bytes, likely to be bigger than other terms
    *  one would normally encounter, and definitely bigger than any UTF-8 terms.
@@ -104,7 +104,7 @@ public final class UnicodeUtil {
       new byte[] {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
   ); // TODO this is unrelated here find a better place for it
   
-  private UnicodeUtil() {} // no instance
+  private UnicodeUtil2() {} // no instance
 
   public static final int UNI_SUR_HIGH_START = 0xD800;
   public static final int UNI_SUR_HIGH_END = 0xDBFF;

@@ -61,9 +61,11 @@ Thrift API sample configuration:
 Main class: com.flaptor.indextank.index.IndexEngine
 
 VM args:
+
     -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Dorg.apache.lucene.FSDirectory.class=org.apache.lucene.store.MMapDirectory -Xmx600M
 
 Program args:
+
     --facets --rti-size 500 --conf-file sample-engine-config --port 20220 --environment-prefix TEST --recover --dir index --snippets --suggest documents --boosts 3 --index-code dgmqn --functions 0:-age
 
 Sample engine configuration file contents:

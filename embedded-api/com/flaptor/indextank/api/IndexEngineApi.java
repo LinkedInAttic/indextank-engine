@@ -136,6 +136,7 @@ public class IndexEngineApi {
         BoostingIndexer indexer = engine.getIndexer();
         indexer.add(id, new Document(prepareProperties(fields)), Timestamp.inSeconds(), prepareBoosts(variables));
         indexer.updateCategories(id, prepareProperties(categories));
+        System.out.println(engine.getIndexer().getStats());
     }
 
     private Map<String, String> prepareProperties(JSONObject jo) {
@@ -166,6 +167,10 @@ public class IndexEngineApi {
             dynamicBoosts.put(parseInt(valueOf(key)), parseDouble(valueOf(value)));
         }
         return dynamicBoosts;
+    }
+
+    public List<String> complete(String query, String field) {
+        return engine.getSuggestor().complete(query, field);
     }
 
 }

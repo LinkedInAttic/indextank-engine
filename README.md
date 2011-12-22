@@ -14,13 +14,13 @@ Apache Public License (APL) 2.0
 
 ### Artifacts:
 
-1. engine-1.0.0.jar <-- core library
+1. indextank-engine-1.0.0.jar <-- core library
 
 ### Maven:
 
 groupId: com.flaptor.indextank
 
-artifactId: engine
+artifactId: indextank-engine
 
 version: 1.0.0
 
@@ -32,13 +32,32 @@ mvn package assembly:single
 
 This will create a single file in:
 
-target/engine-1.0.0-jar-with-dependencies.jar
+target/indextank-engine-1.0.0-jar-with-dependencies.jar
 
-### Sample configuration:
+### Quick start with standalone REST API
+
+You can try basic indexing and searching
+
+Main class: com.flaptor.indextank.api.Launcher
+
+After running the package generation:
+
+$ java -cp target/indextank-engine-1.0.0-jar-with-dependencies.jar com.flaptor.indextank.api.Launcher
+
+This command starts an API server (http://www.indextank.com/documentation/api) at port 20220.
+The indexing and searching can be done with any client or for example, via curl:
+
+curl -d "{\"docid\":\"post1\", \"text\":\"I love Fallout\"}" -v -X PUT http://localhost:20220/v1/indexes/idx/docs
+
+curl -d "{\"docid\":\"post2\", \"text\":\"I love Planescape\"}" -v -X PUT http://localhost:20220/v1/indexes/idx/docs
+
+curl http://localhost:20220/v1/indexes/idx/search?q=love
+
+### Sample index configuration:
 
 Main class: com.flaptor.indextank.index.IndexEngine
 
-VM args: -verbose:gc -Xloggc:logs/gc.log -XX:+PrintGCTimeStamps -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Dorg.apache.lucene.FSDirectory.class=org.apache.lucene.store.MMapDirectory -Xmx600M
+VM args: -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Dorg.apache.lucene.FSDirectory.class=org.apache.lucene.store.MMapDirectory -Xmx600M
 
 Program args: --facets --rti-size 500 --conf-file sample-engine-config --port 20220 --environment-prefix TEST --recover --dir index --snippets --suggest documents --boosts 3 --index-code dgmqn --functions 0:-age
 

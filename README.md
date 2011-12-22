@@ -28,11 +28,11 @@ version: 1.0.0
 
 Build a single jar containing all dependencies by:
 
-  mvn package assembly:single
+    $ mvn package assembly:single
 
 This will create a single file in:
 
-target/indextank-engine-1.0.0-jar-with-dependencies.jar
+    target/indextank-engine-1.0.0-jar-with-dependencies.jar
 
 ### Quick start with standalone REST API
 
@@ -42,43 +42,45 @@ Main class: com.flaptor.indextank.api.Launcher
 
 After running the package generation:
 
-$ java -cp target/indextank-engine-1.0.0-jar-with-dependencies.jar com.flaptor.indextank.api.Launcher
+    $ java -cp target/indextank-engine-1.0.0-jar-with-dependencies.jar com.flaptor.indextank.api.Launcher
 
 This command starts an API server (http://www.indextank.com/documentation/api) at port 20220.
 The indexing and searching can be done with any client or for example, via curl:
 
-curl -d "{\"docid\":\"post1\", \"fields\":{\"text\":\"I love Fallout\"}}" -v -X PUT http://localhost:20220/v1/indexes/idx/docs
+    $ curl -d "{\"docid\":\"post1\", \"fields\":{\"text\":\"I love Fallout\"}}" -v -X PUT http://localhost:20220/v1/indexes/idx/docs
 
-curl -d "{\"docid\":\"post2\", \"fields\":{\"text\":\"I love Planescape\"}}" -v -X PUT http://localhost:20220/v1/indexes/idx/docs
+    $ curl -d "{\"docid\":\"post2\", \"fields\":{\"text\":\"I love Planescape\"}}" -v -X PUT http://localhost:20220/v1/indexes/idx/docs
 
-curl http://localhost:20220/v1/indexes/idx/search?q=love
+    $ curl http://localhost:20220/v1/indexes/idx/search?q=love
 
 ### Sample index configuration:
 
 Main class: com.flaptor.indextank.index.IndexEngine
 
-VM args: -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Dorg.apache.lucene.FSDirectory.class=org.apache.lucene.store.MMapDirectory -Xmx600M
+VM args:
+    -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Dorg.apache.lucene.FSDirectory.class=org.apache.lucene.store.MMapDirectory -Xmx600M
 
-Program args: --facets --rti-size 500 --conf-file sample-engine-config --port 20220 --environment-prefix TEST --recover --dir index --snippets --suggest documents --boosts 3 --index-code dgmqn --functions 0:-age
+Program args:
+    --facets --rti-size 500 --conf-file sample-engine-config --port 20220 --environment-prefix TEST --recover --dir index --snippets --suggest documents --boosts 3 --index-code dgmqn --functions 0:-age
 
 Sample engine configuration file contents:
-{
-"max_variables": 3, 
-"functions": {"0": "-age"}, 
-"index_code": "dgmqn", 
-"allows_facets": true, 
-"ram": 600, 
-"log_server_host": "index123.localhost", 
-"autocomplete": true,
-"log_server_port": 15100, 
-"autocomplete_type": "documents",
-"allows_snippets": true, 
-"rti_size": 500, 
-"facets_bits": 5, 
-"base_port": 20220, 
-"log_based_storage": false, 
-"xmx": 600
-}
+    {
+    "max_variables": 3, 
+    "functions": {"0": "-age"}, 
+    "index_code": "dgmqn", 
+    "allows_facets": true, 
+    "ram": 600, 
+    "log_server_host": "index123.localhost", 
+    "autocomplete": true,
+    "log_server_port": 15100, 
+    "autocomplete_type": "documents",
+    "allows_snippets": true, 
+    "rti_size": 500, 
+    "facets_bits": 5, 
+    "base_port": 20220, 
+    "log_based_storage": false, 
+    "xmx": 600
+    }
 
 
 ### Eclipse:

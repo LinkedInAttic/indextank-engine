@@ -16,6 +16,7 @@
 
 package com.flaptor.indextank.api;
 
+import com.flaptor.indextank.api.resources.Autocomplete;
 import com.flaptor.indextank.api.resources.Docs;
 import com.flaptor.indextank.api.resources.Search;
 import com.ghosthack.turismo.action.Action;
@@ -24,6 +25,8 @@ import com.ghosthack.turismo.routes.RoutesList;
 public class EmbeddedApiV1 extends RoutesList {
 
     protected void map() {
+
+        get("/indexes/:name/autocomplete", new Autocomplete());
 
         get("/indexes/:name/search", new Search());
 

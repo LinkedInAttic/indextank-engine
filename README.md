@@ -48,6 +48,7 @@ This command starts an API server (http://www.indextank.com/documentation/api) a
 The indexing and searching can be done with any client or for example, via curl:
 
 curl -d "{\"docid\":\"post1\", \"text\":\"I love Fallout\"}" -v -X PUT http://localhost:20220/v1/indexes/idx/docs
+
 curl -d "{\"docid\":\"post2\", \"text\":\"I love Planescape\"}" -v -X PUT http://localhost:20220/v1/indexes/idx/docs
 
 curl http://localhost:20220/v1/indexes/idx/search?q=love

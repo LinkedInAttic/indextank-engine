@@ -24,7 +24,8 @@ artifactId: indextank-engine
 
 version: 1.0.0
 
-### Package generation:
+Package generation:
+-------------------
 
 Build a single jar containing all dependencies by:
 
@@ -34,7 +35,8 @@ This will create a single file in:
 
     target/indextank-engine-1.0.0-jar-with-dependencies.jar
 
-### Quick start with standalone REST API
+Quick start with the standalone REST API
+----------------------------------------
 
 You can try basic indexing and searching
 
@@ -53,7 +55,8 @@ The indexing and searching can be done with any client or for example, via curl:
 
     $ curl http://localhost:20220/v1/indexes/idx/search?q=love
 
-### Sample index configuration:
+Thrift API sample configuration:
+--------------------------------
 
 Main class: com.flaptor.indextank.index.IndexEngine
 
@@ -83,7 +86,8 @@ Sample engine configuration file contents:
     }
 
 
-### Eclipse:
+Eclipse:
+--------
 
 Set up Eclipse for this project by executing the command below:
 

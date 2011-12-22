@@ -29,7 +29,7 @@ public class Launcher {
                 "--facets", 
                 "--rti-size", "500", 
                 "--conf-file", "sample-engine-config", 
-                "--port", Configuration.basePort + "", // indexer port+1, searcher port+2, suggestor port+3
+                "--port", Configuration.port + "", // indexer port+1, searcher port+2, suggestor port+3
                 "--environment-prefix", "TEST", 
                 "--recover", 
                 "--dir", base + "index", 

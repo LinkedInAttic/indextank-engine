@@ -19,10 +19,9 @@ package com.flaptor.indextank.api;
 public class Configuration {
     
     public static String host = "localhost";
-    public static Integer basePort = 20220;
-    public static Integer indexerPort = basePort + 1;
-    public static Integer searcherPort = basePort + 2;
-    public static Integer port = 8080;
+    public static Integer port = 20220;
+    public static Integer indexerPort = port + 1;
+    public static Integer searcherPort = port + 2;
     public static String indexCode = "dbajo";
 
 }

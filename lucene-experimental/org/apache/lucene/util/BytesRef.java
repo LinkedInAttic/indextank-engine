@@ -122,7 +122,7 @@ public final class BytesRef implements Comparable<BytesRef> {
    * unpaired surrogates or invalid UTF16 code units.
    */
   public void copy(CharSequence text) {
-    UnicodeUtil.UTF16toUTF8(text, 0, text.length(), this);
+    UnicodeUtil2.UTF16toUTF8(text, 0, text.length(), this);
   }
 
   /**
@@ -132,7 +132,7 @@ public final class BytesRef implements Comparable<BytesRef> {
    * unpaired surrogates or invalid UTF16 code units.
    */
   public void copy(char text[], int offset, int length) {
-    UnicodeUtil.UTF16toUTF8(text, offset, length, this);
+    UnicodeUtil2.UTF16toUTF8(text, offset, length, this);
   }
   
   public boolean bytesEquals(BytesRef other) {
@@ -212,13 +212,13 @@ public final class BytesRef implements Comparable<BytesRef> {
    *  resulting string */
   public String utf8ToString() {
     final CharsRef ref = new CharsRef(length);
-    UnicodeUtil.UTF8toUTF16(bytes, offset, length, ref);
+    UnicodeUtil2.UTF8toUTF16(bytes, offset, length, ref);
     return ref.toString(); 
   }
   
   /** Interprets stored bytes as UTF8 bytes into the given {@link CharsRef} */
   public CharsRef utf8ToChars(CharsRef ref) {
-    UnicodeUtil.UTF8toUTF16(bytes, offset, length, ref);
+    UnicodeUtil2.UTF8toUTF16(bytes, offset, length, ref);
     return ref;
   }
 

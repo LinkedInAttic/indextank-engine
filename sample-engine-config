@@ -1,0 +1,17 @@
+{
+"max_variables": 3, 
+"functions": {"0": "-age"}, 
+"index_code": "dbajo", 
+"allows_facets": true, 
+"ram": 600, 
+"log_based_storage": false, 
+"log_server_host": "index123.localhost", 
+"log_server_port": 15100, 
+"autocomplete": true, 
+"autocomplete_type": "documents", 
+"allows_snippets": true, 
+"rti_size": 500, 
+"facets_bits": 5, 
+"base_port": 20220, 
+"xmx": 600
+}

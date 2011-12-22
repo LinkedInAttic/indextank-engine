@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.flaptor.indextank</groupId>
-  <artifactId>engine</artifactId>
+  <artifactId>indextank-engine</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
@@ -18,6 +18,7 @@
     <maven.test.skip>false</maven.test.skip>
     <lucene.version>3.0.1</lucene.version>
     <slf4j.version>1.6.4</slf4j.version>
+    <jetty.version>7.4.5.v20110725</jetty.version>
   </properties>
   <build>
     <defaultGoal>assembly:single</defaultGoal>
@@ -63,6 +64,7 @@
                 <source>${basedir}/flaptor-util</source>
                 <source>${basedir}/lucene-experimental</source>
                 <source>${basedir}/cojen-2.2.1-sources</source>
+                <source>${basedir}/embedded-api</source>
               </sources>
             </configuration>
           </execution>
@@ -164,7 +166,34 @@
       <artifactId>json-simple</artifactId>
       <version>1.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.ghosthack</groupId>
+      <artifactId>turismo</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>sonatype</id>
+      <url>https://oss.sonatype.org/content/repositories/releases</url>
+    </repository>
+  </repositories>
   <developers>
     <developer>
       <id>adrnai</id>

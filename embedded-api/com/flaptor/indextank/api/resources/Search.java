@@ -86,7 +86,7 @@ public class Search extends Action {
             if(didYouMean != null) {
                 jo.put("didyoumean", didYouMean);
             }
-            jo.put("search_time", searchTime);
+            jo.put("search_time", String.format("%.3f", searchTime));
             
             print(jo.toJSONString());
             return;

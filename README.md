@@ -59,8 +59,11 @@ API Clients (compatible with the embedded API)
 ----------------------------------------------
 
 Java: https://github.com/flaptor/indextank-java
+
 Python: https://github.com/flaptor/indextank-py
+
 Ruby: https://github.com/flaptor/indextank-rb
+
 PHP: https://github.com/flaptor/indextank-php
 
 Thrift API sample configuration:

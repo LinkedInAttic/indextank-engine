@@ -55,6 +55,11 @@ public class Search extends Action {
         List<RangeFilter> variableRangeFilters = Lists.newArrayList();
         List<RangeFilter> functionRangeFilters = Lists.newArrayList();
         Map<String, String> extras = Maps.newHashMap();
+        extras.put("fetch_variables", "*");
+        extras.put("fetch_categories", "*");
+        extras.put("fetch_fields", "*");
+        //extras.put("snippet_fields", "*");
+        //extras.put("snippet_type", "*");
 
         try {
             long t0 = System.currentTimeMillis();

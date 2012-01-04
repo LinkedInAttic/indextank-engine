@@ -46,38 +46,6 @@ import com.google.common.collect.Sets;
 public class CollectionsUtil {
 
     /**
-     * Merges two sorted lists of comparable elements into a new sorted list in linear time O(N) where N is
-     * the sum of list1.sive() + list2.size(), asumming both input lists can be iterated in linear time.
-     * 
-     * @param list1 one of the sorted lists to be merged. it should be sorted by the natural order of
-     * the type T (i.e. T.compareTo(T)) 
-     * @param list2 another sorted list to be merged. it should be sorted by the natural order of
-     * the type T (i.e. T.compareTo(T)) 
-     * 
-     * @return a new list with all the elements of list1 and list2 sorted by their natural order
-     */
-    public static <T extends Comparable<T>> List<T> mergeLists(List<? extends T> list1, List<? extends T> list2) {
-        return CollectionsUtil.<T>mergeLists(list1, list2, CollectionsUtil.<T>naturalComparator());
-    }
-
-    /**
-     * Merges two sorted lists of elements into a new sorted list using a custom comparator in linear time 
-     * O(N) where N is the sum of list1.sive() + list2.size(), asumming both input lists can be iterated in 
-     * linear time
-     * 
-     * @param list1 one of the sorted lists to be merged. it should be sorted by the order provided by {@code comparator}
-     * @param list2 another sorted list to be merged. it should be sorted by the order provided by {@code comparator}
-     * the type T (i.e. T.compareTo(T)) 
-     * @param comparator the comparator that provides the order for this merge operation
-     * 
-     * @return a new list with all the elements of list1 and list2 sorted by the given comparator  
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> List<T> mergeLists(List<? extends T> list1, List<? extends T> list2, Comparator<? super T> comparator) {
-        return CollectionsUtil.<T>mergeListsUsingComparator(Arrays.asList(list1, list2), comparator);
-    }
-
-    /**
      * @return a comparator that provides the natural ordering (i.e. the order defined by T.compareTo(T)
      */
     public static <T extends Comparable<T>> Comparator<T> naturalComparator() {
@@ -94,93 +62,6 @@ public class CollectionsUtil {
     			return comp.compare(o2, o1);
     		}
     	};
-    }
-
-    /**
-     * Merges any number of sorted lists of comparable elements into a new sorted list in linear time O(N) where N is
-     * the sum of each lists' size, asumming all input lists can be iterated in linear time.
-     * 
-     * @param sources the sorted lists to be merged. they should be sorted by the natural order of
-     * the type T (i.e. T.compareTo(T)) 
-     * 
-     * @return a new list with all the elements of all the lists sorted by their natural order
-     */
-    public static <T extends Comparable<T>> List<T> mergeLists(List<? extends List<? extends T>> sources) {
-        List<T> merged = new ArrayList<T>();
-        CollectionsUtil.<T>mergeLists(sources, merged, CollectionsUtil.<T>naturalComparator());
-        return merged;
-    }
-
-    /**
-     * Merges any number of sorted lists of elements into a new sorted list using a custom comparator in linear time 
-     * O(N) where N is the sum of each lists' size, asumming all input lists can be iterated in linear time.
-     * 
-     * @param sources the sorted lists to be merged. they should be sorted by order provided by {@code comparator}
-     * @param comparator the comparator that provides the order for this merge operation
-     * 
-     * @return a new list with all the elements of all the lists sorted by the given comparator
-     */
-    public static <T> List<T> mergeListsUsingComparator(List<? extends List<? extends T>> sources, Comparator<? super T> comparator) {
-        List<T> merged = new ArrayList<T>();
-        CollectionsUtil.<T>mergeLists(sources, merged, comparator);
-        return merged;
-    }
-
-    /**
-     * Merges any number of sorted lists of elements into a given list using the natural order of T in linear time 
-     * O(N) where N is the sum of each lists' size, asumming all input lists can be iterated in linear time.
-     * 
-     * The elements will be added to the end of the {@code target} list.
-     * 
-     * NOTE: any elements previoulsy existing in target won't be modified or reordered in any way.
-     * 
-     * @param sources the sorted lists to be merged.  they should be sorted by the natural order of
-     * the type T (i.e. T.compareTo(T))
-     * @param target the list where the elements will be inserted respecting their natural order. 
-     */
-    public static <T extends Comparable<T>> void mergeLists(List<? extends List<? extends T>> sources, List<? super T> target) {
-        CollectionsUtil.<T>mergeLists(sources, target, CollectionsUtil.<T>naturalComparator());
-    }
-
-    /**
-     * Merges any number of sorted lists of elements into a given list using a custom comparator in linear time 
-     * O(N) where N is the sum of each lists' size, asumming all input lists can be iterated in linear time.
-     * 
-     * The elements will be added to the end of the {@code target} list.
-     * 
-     * NOTE: any elements previoulsy existing in target won't be modified or reordered in any way.
-     * 
-     * @param sources the sorted lists to be merged.  they should be sorted by the natural order of
-     * the type T (i.e. T.compareTo(T))
-     * @param target the list where the elements will be inserted respecting their natural order. 
-     * @param comparator the comparator that provides the order for this merge operation
-     */
-    public static <T> void mergeLists(List<? extends List<? extends T>> sources, List<? super T> target, Comparator<? super T> comparator) {
-        int size = 0;
-        List<ListIterator<? extends T>> iterators = new ArrayList<ListIterator<? extends T>>(sources.size());
-
-        for (List<? extends T> source : sources) {
-            size += source.size();
-            iterators.add(source.listIterator());
-        }
-
-        for (int i = 0; i < size; i++) {
-            T min = null;
-            int minIndex = -1;
-            for (int j = 0; j < iterators.size(); j++) {
-                ListIterator<? extends T> it = iterators.get(j);
-                if (it.hasNext()) {
-                    T t = it.next();
-                    if (minIndex == -1 || comparator.compare(t, min) < 0) {
-                        minIndex = j;
-                        min = t;
-                    }
-                    it.previous();
-                }
-            }
-            target.add(min);
-            iterators.get(minIndex).next();
-        }
     }
 
     public static <T extends Comparable<T>> Iterable<T> mergeIterables(final Iterable<? extends Iterable<? extends T>> iterables) {

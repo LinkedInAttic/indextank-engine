@@ -176,6 +176,9 @@ public class LogReader {
 
         long newPosition = position + iterator.getSafelyRead();
         boolean finished = newPosition == segment.length();
+        logger.debug("position: %d, iterator.getSafelyRead(): %d, newPosition: %d", position,
+                iterator.getSafelyRead(), newPosition);
+        logger.debug("Segment.type: %s", segment.type);
 
         if (finished) {
             switch (segment.type) {
@@ -198,6 +201,7 @@ public class LogReader {
 
                     // let's look for the first index segment after the one we just read
                     for (Segment s : log.getSegments()) {
+                        logger.debug("In loop segment: %s", segment.toString()+", foundCurrent = %s", String.valueOf(foundCurrent));
                         if (foundCurrent) {
                             nextIndexSegment = s;
                             break;
@@ -205,6 +209,8 @@ public class LogReader {
                         if (s.timestamp == token.get_timestamp()) {
                             foundCurrent = true;
                         }
+                        logger.debug("s.timestamp: %d, token.get_timestamp: %d, foundCurrent: %s",
+                                s.timestamp, token.get_timestamp(), String.valueOf(foundCurrent));
                     }
                     if (!foundCurrent) {
                         // the file we just read to build the page has dissapeared. we can't

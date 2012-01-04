@@ -184,10 +184,10 @@ public class CollectionsUtil {
     }
 
     public static <T extends Comparable<T>> Iterable<T> mergeIterables(final Iterable<? extends Iterable<? extends T>> iterables) {
-        return mergeIterables(iterables, Ordering.natural());
+        return mergeIterablesUsingComparator(iterables, Ordering.natural());
     }
     
-    public static <T> Iterable<T> mergeIterables(final Iterable<? extends Iterable<? extends T>> iterables, final Comparator<? super T> comparator) {
+    public static <T> Iterable<T> mergeIterablesUsingComparator(final Iterable<? extends Iterable<? extends T>> iterables, final Comparator<? super T> comparator) {
         return new Iterable<T>() {
             public Iterator<T> iterator() {
                 return mergeIterators(Iterables.transform(iterables, new Function<Iterable<? extends T>, Iterator<? extends T>>() {

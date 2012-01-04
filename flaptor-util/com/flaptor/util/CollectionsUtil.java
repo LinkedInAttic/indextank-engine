@@ -16,12 +16,10 @@ limitations under the License.
 
 package com.flaptor.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
@@ -57,11 +55,11 @@ public class CollectionsUtil {
     }
     
     public static <T> Comparator<T> inverseComparator(final Comparator<T> comp) {
-    	return new Comparator<T>() {
-    		public int compare(T o1, T o2) {
-    			return comp.compare(o2, o1);
-    		}
-    	};
+        return new Comparator<T>() {
+            public int compare(T o1, T o2) {
+                return comp.compare(o2, o1);
+            }
+        };
     }
 
     public static <T extends Comparable<T>> Iterable<T> mergeIterables(final Iterable<? extends Iterable<? extends T>> iterables) {
@@ -329,19 +327,21 @@ public class CollectionsUtil {
         return floats;
     }
 
-    public static <T extends Comparable<T>> SortedSet<T> sortTopN(Iterable<T> iterable, int n) {
-    	return sortTopN(iterable, n, Ordering.<T>natural());
-    	
+    public static <T extends Comparable<T>> SortedSet<T> sortTopN(
+            Iterable<T> iterable, int n) {
+        return sortTopN(iterable, n, Ordering.<T> natural());
     }
-    public static <T> SortedSet<T> sortTopN(Iterable<T> iterable, int n, Comparator<T> comparator) {
-    	TreeSet<T> r = Sets.newTreeSet(comparator);
-    	for (T t : iterable) {
-			r.add(t);
-			if (r.size() > n) {
-				r.pollLast();
-			}
-		}
-    	return r;
+
+    public static <T> SortedSet<T> sortTopN(Iterable<T> iterable, int n,
+            Comparator<T> comparator) {
+        TreeSet<T> r = Sets.newTreeSet(comparator);
+        for (T t : iterable) {
+            r.add(t);
+            if (r.size() > n) {
+                r.pollLast();
+            }
+        }
+        return r;
     }
     
 }

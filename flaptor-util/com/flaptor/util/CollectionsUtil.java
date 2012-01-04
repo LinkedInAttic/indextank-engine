@@ -74,7 +74,7 @@ public class CollectionsUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> List<T> mergeLists(List<? extends T> list1, List<? extends T> list2, Comparator<? super T> comparator) {
-        return CollectionsUtil.<T>mergeLists(Arrays.asList(list1, list2), comparator);
+        return CollectionsUtil.<T>mergeListsUsingComparator(Arrays.asList(list1, list2), comparator);
     }
 
     /**
@@ -120,7 +120,7 @@ public class CollectionsUtil {
      * 
      * @return a new list with all the elements of all the lists sorted by the given comparator
      */
-    public static <T> List<T> mergeLists(List<? extends List<? extends T>> sources, Comparator<? super T> comparator) {
+    public static <T> List<T> mergeListsUsingComparator(List<? extends List<? extends T>> sources, Comparator<? super T> comparator) {
         List<T> merged = new ArrayList<T>();
         CollectionsUtil.<T>mergeLists(sources, merged, comparator);
         return merged;

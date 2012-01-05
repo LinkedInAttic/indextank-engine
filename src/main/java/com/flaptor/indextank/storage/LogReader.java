@@ -206,7 +206,7 @@ public class LogReader {
                             nextIndexSegment = s;
                             break;
                         }
-                        if (s.timestamp == token.get_timestamp()) {
+                        if (s.timestamp == segment.timestamp) {
                             foundCurrent = true;
                         }
                         logger.debug("s.timestamp: %d, token.get_timestamp: %d, foundCurrent: %s",
@@ -215,6 +215,7 @@ public class LogReader {
                     if (!foundCurrent) {
                         // the file we just read to build the page has dissapeared. we can't
                         // guarantee that the next one didn't dissappear as well. ABORT!!!
+                        logger.error("Unable to find sorted segment for timestamp %s", token.get_timestamp());
                         return revertFromScratch();
                     }
                     if (nextIndexSegment != null) {

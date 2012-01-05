@@ -55,6 +55,11 @@ public class Search extends Action {
         List<RangeFilter> variableRangeFilters = Lists.newArrayList();
         List<RangeFilter> functionRangeFilters = Lists.newArrayList();
         Map<String, String> extras = Maps.newHashMap();
+        extras.put("fetch_variables", "*");
+        extras.put("fetch_categories", "*");
+        extras.put("fetch_fields", "*");
+        //extras.put("snippet_fields", "*");
+        //extras.put("snippet_type", "*");
 
         try {
             long t0 = System.currentTimeMillis();
@@ -86,7 +91,7 @@ public class Search extends Action {
             if(didYouMean != null) {
                 jo.put("didyoumean", didYouMean);
             }
-            jo.put("search_time", searchTime);
+            jo.put("search_time", String.format("%.3f", searchTime));
             
             print(jo.toJSONString());
             return;

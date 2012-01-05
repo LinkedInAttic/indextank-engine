@@ -58,7 +58,7 @@ public class LogReader {
         indexLog.markReadNow();
         Segment segment;
         long nextTimestamp = dealer.nextTimestamp;
-        
+
         if (token.is_set_timestamp()) {
             long timestamp = token.get_timestamp();
             switch (token.get_type()) {

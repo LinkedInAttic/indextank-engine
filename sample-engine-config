@@ -1,5 +1,6 @@
 {
-"max_variables": 3, 
+"encoding": "utf-8",
+"max_variables": 3,
 "functions": {"0": "-age"}, 
 "index_code": "dbajo", 
 "allows_facets": true, 

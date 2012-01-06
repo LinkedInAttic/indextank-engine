@@ -16,6 +16,7 @@
 
 package com.flaptor.indextank.api.resources;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,9 +35,12 @@ import com.flaptor.indextank.rpc.RangeFilter;
 import com.flaptor.indextank.search.SearchResult;
 import com.flaptor.indextank.search.SearchResults;
 import com.ghosthack.turismo.action.Action;
+import com.ghosthack.turismo.servlet.Env;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
+
+import javax.servlet.http.HttpServletResponse;
 
 public class Search extends Action {
 
@@ -45,6 +49,15 @@ public class Search extends Action {
      */
     public void run() {
         IndexEngineApi api = (IndexEngineApi) ctx().getAttribute("api");
+        HttpServletResponse res = res();
+
+        String characterEncoding = api.getCharacterEncoding();
+        try {
+            req().setCharacterEncoding(characterEncoding);
+            res.setCharacterEncoding(characterEncoding);
+            res.setContentType("application/json");
+        } catch (UnsupportedEncodingException ignored) {
+        }
 
         String q = params("q");
         int start = QueryHelper.parseIntParam(params("start"), 0);
@@ -106,8 +119,8 @@ public class Search extends Action {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        res().setStatus(503);
+
+        res.setStatus(503);
         print("Service unavailable"); // TODO: descriptive error msg
     }
 

@@ -55,9 +55,11 @@ import com.google.common.collect.Multimap;
 public class IndexEngineApi {
 
     protected final EmbeddedIndexEngine engine;
+    protected final String characterEncoding;
 
     public IndexEngineApi(EmbeddedIndexEngine engine) {
         this.engine = engine;
+        characterEncoding = engine.getCharacterEncoding();
     }
 
     public SearchResults search(String queryStr, 
@@ -173,4 +175,7 @@ public class IndexEngineApi {
         return engine.getSuggestor().complete(query, field);
     }
 
+    public String getCharacterEncoding() {
+        return characterEncoding;
+    }
 }

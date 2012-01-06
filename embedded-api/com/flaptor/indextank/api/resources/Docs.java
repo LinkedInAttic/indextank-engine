@@ -17,6 +17,7 @@
 package com.flaptor.indextank.api.resources;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 import org.json.simple.JSONArray;
@@ -26,6 +27,10 @@ import org.json.simple.parser.ParseException;
 
 import com.flaptor.indextank.api.IndexEngineApi;
 import com.ghosthack.turismo.action.Action;
+import com.ghosthack.turismo.servlet.Env;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class Docs extends Action {
 
@@ -34,19 +39,30 @@ public class Docs extends Action {
      */
     public void run() {
         IndexEngineApi api = (IndexEngineApi) ctx().getAttribute("api");
+        HttpServletResponse res = res();
+        HttpServletRequest req = req();
+
+        String characterEncoding = api.getCharacterEncoding();
         try {
-            Object parse = JSONValue.parseWithException(req().getReader());
+            req.setCharacterEncoding(characterEncoding);
+            res.setCharacterEncoding(characterEncoding);
+            res.setContentType("application/json");
+        } catch (UnsupportedEncodingException ignored) {
+        }
+
+        try {
+            Object parse = JSONValue.parseWithException(req.getReader());
             if(parse instanceof JSONObject) { // 200, 400, 404, 409, 503
                 JSONObject jo = (JSONObject) parse;
                 try {
                     putDocument(api, jo);
-                    res().setStatus(200);
+                    res.setStatus(200);
                     return;
                     
                 } catch(Exception e) {
                     e.printStackTrace();
                     if(LOG_ENABLED) LOG.severe(e.getMessage());
-                    res().setStatus(400);
+                    res.setStatus(400);
                     print("Invalid or missing argument"); // TODO: descriptive error msg
                     return;
                 }
@@ -54,7 +70,7 @@ public class Docs extends Action {
                 JSONArray statuses = new JSONArray();
                 JSONArray ja = (JSONArray) parse;
                 if(!validateDocuments(ja)) {
-                    res().setStatus(400);
+                    res.setStatus(400);
                     print("Invalid or missing argument"); // TODO: descriptive error msg
                     return;
                 }
@@ -82,7 +98,7 @@ public class Docs extends Action {
         } catch (Exception e) {
             if(LOG_ENABLED) LOG.severe("PUT doc " + e.getMessage());
         }
-        res().setStatus(503);
+        res.setStatus(503);
         print("Service unavailable"); // TODO: descriptive error msg
     }
 

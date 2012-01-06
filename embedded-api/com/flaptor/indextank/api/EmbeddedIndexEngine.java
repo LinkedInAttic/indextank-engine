@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -99,6 +100,7 @@ public class EmbeddedIndexEngine {
     private final String environment;
     private final int basePort;
     private final File baseDir;
+    private final String characterEncoding;
     
     private IndexRecoverer.IndexStorageValue recoveryStorage;
     private String cassandraClusterHosts;
@@ -176,6 +178,11 @@ public class EmbeddedIndexEngine {
         
     	String defaultField = "text";
     	
+      if (configuration.containsKey("encoding")) {
+          characterEncoding = (String) configuration.get("encoding");
+      } else {
+          characterEncoding = Charset.defaultCharset().name();
+      }
     	
     	if (configuration.containsKey("log_based_storage")) {
     	    logBasedStorage = (Boolean)configuration.get("log_based_storage");
@@ -365,6 +372,10 @@ public class EmbeddedIndexEngine {
 
     public IndexerStatus getStatus() {
         return status;
+    }
+
+    public String getCharacterEncoding() {
+        return characterEncoding;
     }
     
     private void setIndexer(BoostingIndexer indexer) {

@@ -16,11 +16,14 @@
 
 package com.flaptor.indextank.search;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 import com.flaptor.indextank.index.Document;
@@ -333,10 +336,39 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
         if (str == null) {
             return;
         }
-    	
-        FlaptorHtmlEntities.HTML40.escape(dest, str, start, offset);
+
+        SnippetCharSequence input = new SnippetCharSequence(str, start, offset);
+        dest.append(StringEscapeUtils.ESCAPE_HTML4.translate(input));
+
     }
 
+    private static class SnippetCharSequence implements CharSequence {
+        protected final int start;
+        protected final String str;
+        protected int length;
+        
+        public SnippetCharSequence(String str, int start, int offset) {
+            this.str = str;
+            this.start = start;
+            this.length = offset - start;
+        }
 
+        @Override
+        public CharSequence subSequence(int beginIndex, int endIndex) {
+            CharSequence s = str.subSequence(start + beginIndex, start + endIndex);
+            return s;
+        }
+        
+        @Override
+        public int length() {
+            return length;
+        }
+        
+        @Override
+        public char charAt(int index) {
+            return str.charAt(start + index);
+        }
+
+    }
 
 }

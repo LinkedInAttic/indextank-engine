@@ -29,7 +29,7 @@ Package generation:
 
 Build a single jar containing all dependencies by:
 
-    $ mvn package assembly:single
+    $ mvn compile package assembly:single
 
 This will create a single file in:
 

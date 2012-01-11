@@ -99,13 +99,23 @@ Sample engine configuration file contents:
     "xmx": 600
     }
 
+Tests:
+------
+
+Execute the following command to run:
+
+    mvn test
+
+Avoid running tests by adding:
+
+    mvn -Dmaven.test.skip=true compile
 
 Eclipse:
 --------
 
 Set up Eclipse for this project by executing the command below:
 
-mvn eclipse:eclipse
+    mvn eclipse:eclipse
 
 Inside Eclipse, select Preferences > Java > Build Path > Classpath Variables. Define a new classpath variable M2_REPO and assign maven repository.
 

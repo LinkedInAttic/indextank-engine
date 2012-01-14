@@ -16,14 +16,11 @@
 
 package com.flaptor.indextank.search;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 import com.flaptor.indextank.index.Document;
@@ -32,14 +29,14 @@ import com.flaptor.indextank.query.IndexEngineParser;
 import com.flaptor.indextank.query.Query;
 import com.flaptor.indextank.query.TermQuery;
 import com.flaptor.indextank.storage.alternatives.DocumentStorage;
-import com.flaptor.indextank.util.FlaptorHtmlEntities;
+import com.flaptor.indextank.util.CharacterTranslator;
 import com.flaptor.util.Execute;
+import com.flaptor.util.Pair;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.flaptor.util.Pair;
 
 public class SnippetSearcher extends AbstractDocumentSearcher {
 	private static final Logger logger = Logger.getLogger(Execute.whoAmI());
@@ -337,37 +334,7 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
             return;
         }
 
-        SnippetCharSequence input = new SnippetCharSequence(str, start, offset);
-        dest.append(StringEscapeUtils.ESCAPE_HTML4.translate(input));
-
-    }
-
-    private static class SnippetCharSequence implements CharSequence {
-        protected final int start;
-        protected final String str;
-        protected int length;
-        
-        public SnippetCharSequence(String str, int start, int offset) {
-            this.str = str;
-            this.start = start;
-            this.length = offset - start;
-        }
-
-        @Override
-        public CharSequence subSequence(int beginIndex, int endIndex) {
-            CharSequence s = str.subSequence(start + beginIndex, start + endIndex);
-            return s;
-        }
-        
-        @Override
-        public int length() {
-            return length;
-        }
-        
-        @Override
-        public char charAt(int index) {
-            return str.charAt(start + index);
-        }
+        CharacterTranslator.HTML4.escape(dest, str, start, offset);
 
     }
 

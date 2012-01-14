@@ -43,7 +43,15 @@ public class CharacterTranslator {
         for (int i = start; i < offset; i++) {
             Character c = input.charAt(i);
             CharSequence seq = lookupMap.get(c);
-            output.append((seq == null)? c: seq);
+            if (seq != null) {
+                output.append(seq);
+            } else if (c > 0x7F) {
+                output.append("&#");
+                output.append(Integer.toString(c, 10));
+                output.append(';');
+            } else {
+                output.append(c);
+            }
         }
     }
 

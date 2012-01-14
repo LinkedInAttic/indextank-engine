@@ -30,6 +30,11 @@ public class CharacterTranslator {
 
     private HashMap<Character, CharSequence> lookupMap;
 
+    /**
+     * Merges parameter arrays into a map. 
+     * Assumes that parameter arrays have a 1-char key.
+     * @param lookup
+     */
     public CharacterTranslator(CharSequence[][] ... lookup) {
         lookupMap = new HashMap<Character, CharSequence>();
         for(CharSequence[][] l: lookup) {

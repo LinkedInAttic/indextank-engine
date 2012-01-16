@@ -29,14 +29,14 @@ import com.flaptor.indextank.query.IndexEngineParser;
 import com.flaptor.indextank.query.Query;
 import com.flaptor.indextank.query.TermQuery;
 import com.flaptor.indextank.storage.alternatives.DocumentStorage;
-import com.flaptor.indextank.util.FlaptorHtmlEntities;
+import com.flaptor.indextank.util.CharacterTranslator;
 import com.flaptor.util.Execute;
+import com.flaptor.util.Pair;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.flaptor.util.Pair;
 
 public class SnippetSearcher extends AbstractDocumentSearcher {
 	private static final Logger logger = Logger.getLogger(Execute.whoAmI());
@@ -333,10 +333,9 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
         if (str == null) {
             return;
         }
-    	
-        FlaptorHtmlEntities.HTML40.escape(dest, str, start, offset);
+
+        CharacterTranslator.HTML4.escape(dest, str, start, offset);
+
     }
-
-
 
 }

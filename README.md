@@ -4,6 +4,8 @@ About IndexTank Engine
 This project contains IndexTank (http://indextank.com) search engine implementation.
 Includes features like variables (boosts), categories (facets), faceted search, snippeting, custom scoring functions, suggest, and autocomplete.
 
+For IndexTank's full administrative stack (which makes use of this engine) see http://github.com/linkedin/indextank-service
+
 ### Homepage:
 
 Find out more about at: TBD

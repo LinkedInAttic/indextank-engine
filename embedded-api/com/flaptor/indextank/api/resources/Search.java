@@ -28,11 +28,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.flaptor.indextank.api.IndexEngineApi;
+import com.flaptor.indextank.api.IndexEngineApiException;
 import com.flaptor.indextank.api.util.QueryHelper;
 import com.flaptor.indextank.rpc.CategoryFilter;
-import com.flaptor.indextank.rpc.IndextankException;
-import com.flaptor.indextank.rpc.InvalidQueryException;
-import com.flaptor.indextank.rpc.MissingQueryVariableException;
 import com.flaptor.indextank.rpc.RangeFilter;
 import com.flaptor.indextank.search.SearchResult;
 import com.flaptor.indextank.search.SearchResults;
@@ -92,14 +90,7 @@ public class Search extends Action {
             print(jo.toJSONString());
             return;
 
-        } catch (IndextankException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvalidQueryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (MissingQueryVariableException e) {
-            // TODO Auto-generated catch block
+        } catch (IndexEngineApiException e) {
             e.printStackTrace();
         }
 

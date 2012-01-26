@@ -69,7 +69,7 @@ public class IndexEngineApi {
             List<CategoryFilter> facetsFilter, 
             List<RangeFilter> variableRangeFilters, 
             List<RangeFilter> functionRangeFilters, 
-            Map<String,String> extraParameters) throws IndextankException, InvalidQueryException, MissingQueryVariableException {
+            Map<String,String> extraParameters) throws IndexEngineApiException {
         DocumentSearcher searcher = engine.getSearcher();
         try { 
             Query query = generateQuery(queryStr, start, len, 
@@ -83,19 +83,13 @@ public class IndexEngineApi {
             SearchResults search = searcher.search(query, start, len, scoringFunctionIndex, extraParameters);
             return search;
         } catch (NoSuchQueryVariableException e) {
-            MissingQueryVariableException ite = new MissingQueryVariableException();
-            ite.set_message("Missing query variable with index '" + e.getMissingVariableIndex() + "'");
-            throw ite;
-        } catch (ParseException pe) {
-            InvalidQueryException ite = new InvalidQueryException();
-            ite.set_message("Invalid query");
-            throw ite;
+            throw new IndexEngineApiException("Missing query variable with index '" + e.getMissingVariableIndex() + "'", e);
+        } catch (ParseException e) {
+            throw new IndexEngineApiException("Invalid query", e);
         } catch (RuntimeException e) {
-            throw new IndextankException();
+            throw new IndexEngineApiException(e);
         } catch (InterruptedException e) {
-            IndextankException ite = new IndextankException();
-            ite.set_message("Interrupted while searching.");
-            throw ite;
+            throw new IndexEngineApiException("Interrupted while searching.", e);
         }
     }
 

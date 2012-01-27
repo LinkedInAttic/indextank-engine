@@ -17,6 +17,7 @@
 package com.flaptor.indextank.api;
 
 import com.flaptor.indextank.api.resources.Autocomplete;
+import com.flaptor.indextank.api.resources.DeleteDocs;
 import com.flaptor.indextank.api.resources.Docs;
 import com.flaptor.indextank.api.resources.Search;
 import com.ghosthack.turismo.action.Action;
@@ -32,6 +33,8 @@ public class EmbeddedApiV1 extends RoutesList {
 
         put("/indexes/:name/docs", new Docs());
 
+        delete("/indexes/:name/docs", new DeleteDocs());
+        
         get("/indexes", new Action() {
             public void run() {
                 // dummy response for embedded server

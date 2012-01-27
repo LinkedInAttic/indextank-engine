@@ -138,7 +138,13 @@ public class IndexEngineApi {
         indexer.updateCategories(id, prepareProperties(categories));
         System.out.println(engine.getIndexer().getStats());
     }
-
+    
+    public void deleteDocument(String id) {
+        BoostingIndexer indexer = engine.getIndexer();
+        indexer.del(id);
+        System.out.println(engine.getIndexer().getStats());
+    }
+    
     private Map<String, String> prepareProperties(JSONObject jo) {
         Map<String, String> properties = Maps.newHashMap();
         if(jo == null) {

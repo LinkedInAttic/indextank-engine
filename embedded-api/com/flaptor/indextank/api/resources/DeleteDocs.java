@@ -50,20 +50,44 @@ public class DeleteDocs extends Action {
                     print("Invalid or missing argument"); // TODO: descriptive error msg
                     return;
                 }
-            } 
+            } else if(parse instanceof JSONArray) {
+                JSONArray statuses = new JSONArray();
+                JSONArray ja = (JSONArray) parse;
+                if(!validateDocuments(ja)) {
+                    res().setStatus(400);
+                    print("Invalid or missing argument"); // TODO: descriptive error msg
+                    return;
+                }
+                boolean hasError = false;
+                for(Object o: ja) {
+                    JSONObject jo = (JSONObject) o;
+                    JSONObject status = new JSONObject();
+                    try {
+                        deleteDocument(api, jo);
+                        status.put("added", true);
+                    } catch(Exception e) {
+                        status.put("added", false);
+                        status.put("error", "Invalid or missing argument"); // TODO: descriptive error msg
+                        hasError = true;
+                    }
+                    statuses.add(status);
+                }
+                print(statuses.toJSONString());
+                return;
+            }
         } catch (IOException e) {
-            if(LOG_ENABLED) LOG.severe("PUT doc, parse input " + e.getMessage());
+            if(LOG_ENABLED) LOG.severe("DELETE doc, parse input " + e.getMessage());
         } catch (ParseException e) {
-            if(LOG_ENABLED) LOG.severe("PUT doc, parse input " + e.getMessage());
+            if(LOG_ENABLED) LOG.severe("DELETE doc, parse input " + e.getMessage());
         } catch (Exception e) {
-            if(LOG_ENABLED) LOG.severe("PUT doc " + e.getMessage());
+            if(LOG_ENABLED) LOG.severe("DELETE doc " + e.getMessage());
         }
         res().setStatus(503);
         print("Service unavailable"); // TODO: descriptive error msg
     }
 
     private void deleteDocument(IndexEngineApi api, JSONObject jo) {
-        String docid = String.valueOf(jo.get("docid")); // TODO: empty & < 1024b
+        String docid = String.valueOf(jo.get("docid"));
         api.deleteDocument(docid);
     }
 

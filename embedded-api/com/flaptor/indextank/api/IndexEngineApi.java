@@ -132,9 +132,13 @@ public class IndexEngineApi {
         BoostingIndexer indexer = engine.getIndexer();
         indexer.add(id, new Document(prepareProperties(fields)), Timestamp.inSeconds(), prepareBoosts(variables));
         indexer.updateCategories(id, prepareProperties(categories));
-        System.out.println(engine.getIndexer().getStats());
     }
-
+    
+    public void deleteDocument(String id) {
+        BoostingIndexer indexer = engine.getIndexer();
+        indexer.del(id);
+    }
+    
     private Map<String, String> prepareProperties(JSONObject jo) {
         Map<String, String> properties = Maps.newHashMap();
         if(jo == null) {

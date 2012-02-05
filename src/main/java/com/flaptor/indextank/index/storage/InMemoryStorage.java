@@ -51,271 +51,95 @@ import com.google.common.collect.Maps;
 
 /**
  * @author santip
+ * @author dbuthay
  *
  */
-public class InMemoryStorage implements DocumentStorage {
-    private static final Logger logger = Logger.getLogger(Execute.whoAmI());
-    private static final int COMPRESSION_THRESHOLD = 100;
-    private static final int HEADER_COMPRESSED = 0x1;
-    private static final int HEADER_HAS_TEXT = 0x2;
-    private static final String MAIN_FILE_NAME = "InMemoryStorage";
+public class InMemoryStorage extends DocumentBinaryStorage {
+  private static final Logger logger = Logger.getLogger(Execute.whoAmI());
+  private static final String MAIN_FILE_NAME = "InMemoryStorage";
 
-    private final File backupDir;
-	private ConcurrentMap<String, byte[]> compressedMap = new MapMaker().makeMap();
+  private final File backupDir;
+  private ConcurrentMap<String, byte[]> compressedMap = new MapMaker().makeMap();
 
-    @SuppressWarnings("unchecked")
-    public InMemoryStorage(File backupDir, boolean load) throws IOException {
-        Preconditions.checkNotNull(backupDir);
-        checkDirArgument(backupDir);
-        this.backupDir = backupDir;
-        File f = new File(this.backupDir, MAIN_FILE_NAME);
-        if (load && f.exists()) {
-            ObjectInputStream is = null;
-            try {
-                is = new ObjectInputStream(new BufferedInputStream(new FileInputStream(f)));
-                try {
-                    compressedMap = (ConcurrentMap<String, byte[]>) is.readObject();
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException(e);
-                }
-                logger.info("State loaded.");
-            } finally {
-                Execute.close(is);
-            }
-        } else if (load) {
-            logger.warn("Starting a new(empty) InMemoryStorage. Load was requested but no file was found.");
-        } else {
-            logger.info("Starting a new(empty) InMemoryStorage.");
-        }
-    }
-
-    /**
-     * @throws IllegalArgumentException
-     */
-    private static void checkDirArgument(File backupDir) {
-        Preconditions.checkNotNull(backupDir);
-        if (!backupDir.canRead()) {
-            String s = "Don't have read permission over the backup directory(" + backupDir.getAbsolutePath() + ").";
-            logger.error(s);
-            throw new IllegalArgumentException(s);
-        }
-        if (!backupDir.canWrite()) {
-            String s = "Don't have write permission over the backup directory(" + backupDir.getAbsolutePath() + ").";
-            logger.error(s);
-            throw new IllegalArgumentException(s);
-        }
-    }
-
-    public void dump() throws IOException {
-        syncToDisk();
-    }
-
-    /**
-     * Serializes this instance content to disk.
-     * Blocking method.
-     */
-    private synchronized void syncToDisk() throws IOException {
-        logger.info("Starting dump to disk.");
-        File f = new File(backupDir, MAIN_FILE_NAME);
-        ObjectOutputStream os = null;
+  @SuppressWarnings("unchecked")
+  public InMemoryStorage(File backupDir, boolean load) throws IOException {
+    Preconditions.checkNotNull(backupDir);
+    checkDirArgument(backupDir);
+    this.backupDir = backupDir;
+    File f = new File(this.backupDir, MAIN_FILE_NAME);
+    if (load && f.exists()) {
+      ObjectInputStream is = null;
+      try {
+        is = new ObjectInputStream(new BufferedInputStream(new FileInputStream(f)));
         try {
-            os = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
-            os.writeObject(compressedMap);
-            os.flush();
-            logger.info("Dump to disk completed.");
-        } finally {
-            Execute.close(os);
+          compressedMap = (ConcurrentMap<String, byte[]>) is.readObject();
+        } catch (ClassNotFoundException e) {
+          throw new IllegalStateException(e);
         }
+        logger.info("State loaded.");
+      } finally {
+        Execute.close(is);
+      }
+    } else if (load) {
+      logger.warn("Starting a new(empty) InMemoryStorage. Load was requested but no file was found.");
+    } else {
+      logger.info("Starting a new(empty) InMemoryStorage.");
     }
+  }
+
+  /**
+   * @throws IllegalArgumentException
+   */
+  private static void checkDirArgument(File backupDir) {
+    Preconditions.checkNotNull(backupDir);
+    if (!backupDir.canRead()) {
+      String s = "Don't have read permission over the backup directory(" + backupDir.getAbsolutePath() + ").";
+      logger.error(s);
+      throw new IllegalArgumentException(s);
+    }
+    if (!backupDir.canWrite()) {
+      String s = "Don't have write permission over the backup directory(" + backupDir.getAbsolutePath() + ").";
+      logger.error(s);
+      throw new IllegalArgumentException(s);
+    }
+  }
+
+  public void dump() throws IOException {
+    syncToDisk();
+  }
+
+  /**
+   * Serializes this instance content to disk.
+   * Blocking method.
+   */
+  private synchronized void syncToDisk() throws IOException {
+    logger.info("Starting dump to disk.");
+    File f = new File(backupDir, MAIN_FILE_NAME);
+    ObjectOutputStream os = null;
+    try {
+      os = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
+      os.writeObject(compressedMap);
+      os.flush();
+      logger.info("Dump to disk completed.");
+    } finally {
+      Execute.close(os);
+    }
+  }
 
     
 	@Override
-	public Document getDocument(String docId) {
-		return decompress(compressedMap.get(docId));
+	protected byte[] getBinaryDoc(String docId) {
+		return compressedMap.get(docId);
 	}
 
 	@Override
-	public void saveDocument(String docId, Document document) {
-		compressedMap.put(docId, compress(document));
+	public void saveBinaryDoc(String docId, byte[] bytes) {
+		compressedMap.put(docId, bytes);
 	}
 
 	@Override
-	public void deleteDocument(String docId) {
+	public void deleteBinaryDoc(String docId) {
 		compressedMap.remove(docId);
-	}
-
-	private static byte[] compress(Document document) {
-		try {
-			int estimatedSize = estimateSize(document);
-			boolean compress = estimatedSize >= COMPRESSION_THRESHOLD;
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(estimatedSize);
-	    	OutputStream os = baos;
-	    	writeTo(document, os, compress);
-	    	return baos.toByteArray();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static Document decompress(byte[] bytes) {
-		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-			InputStream is = bais;
-			return readFrom(is);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static void writeTo(Document document, OutputStream os, boolean compress) throws IOException {
-	    int header = 0;
-	    if (compress) {
-	        header |= HEADER_COMPRESSED;
-	    }
-		String text = document.getField("text");
-		if (text != null) {
-		    header |= HEADER_HAS_TEXT;
-		}
-		os.write(header);
-		if (compress) {
-		    os = new GZIPOutputStream(os);
-		}
-		if (text != null) {
-			writeUTF(text, os);
-		}
-		int fs = document.asMap().size();
-		if (text != null) fs -= 1;
-		writeSize(fs , os);
-		for (Entry<String,String> e : document.asMap().entrySet()) {
-			if (!e.getKey().equals("text")) {
-				writeUTF(e.getKey(), os);
-				writeUTF(e.getValue(), os);
-			}
-		}
-		os.close();
-	}
-
-	private static Document readFrom(InputStream is) throws IOException {
-	    int header = is.read();
-		String text = null;
-		if ((header & HEADER_COMPRESSED) != 0) {
-		    is = new GZIPInputStream(is);
-		}
-		if ((header & HEADER_HAS_TEXT) != 0) { 
-		    text = readUTF(is);
-		}
-		int fs = readSize(is);
-		Map<String, String> fields = Maps.newHashMapWithExpectedSize(fs + (text == null ? 0 : 1));
-		if (text != null) {
-		    fields.put("text", text);
-		}
-		while (fs-- > 0) {
-			fields.put(readUTF(is), readUTF(is));
-		}
-		return new Document(fields);
-	}
-
-	private static int estimateSize(Document document) {
-		int size = 0;
-		for (Entry<String, String> e : document.asMap().entrySet()) {
-			if (!e.getKey().equals("text")) {
-				size += e.getKey().length();
-			}
-			size += e.getValue().length();
-		}
-		return size;
-	}
-
-	private static void writeUTF(String text, OutputStream os) throws IOException {
-		int strlen = text.length();
-		int c = 0;
-	
-		writeSize(strlen, os);
-	
-		int i=0;
-		for (i=0; i<strlen; i++) {
-			c = text.charAt(i);
-			if (!((c >= 0x0001) && (c <= 0x007F))) break;
-			os.write(c);
-		}
-	
-		for (;i < strlen; i++){
-			c = text.charAt(i);
-			if ((c >= 0x0001) && (c <= 0x007F)) {
-				os.write(c);
-	
-			} else if (c > 0x07FF) {
-				os.write(0xE0 | ((c >> 12) & 0x0F));
-				os.write(0x80 | ((c >>  6) & 0x3F));
-				os.write(0x80 | ((c >>  0) & 0x3F));
-			} else {
-				os.write(0xC0 | ((c >>  6) & 0x1F));
-				os.write(0x80 | ((c >>  0) & 0x3F));
-			}
-		}
-	}
-
-	private static String readUTF(InputStream is) throws IOException {
-		int size = readSize(is);
-		char[] chars = new char[size];
-		int c, c2, c3;
-	    for (int i = 0; i < chars.length; i++) {
-	        c = readNonEOF(is);
-	        switch (c >> 4) {
-	            case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-	                /* 0xxxxxxx*/
-	                chars[i]=(char)c;
-	                break;
-	            case 12: case 13:
-	                /* 110x xxxx   10xx xxxx*/
-	                c2 = readNonEOF(is);
-	                if ((c2 & 0xC0) != 0x80) throw new UTFDataFormatException("malformed input around char " + i); 
-	                chars[i] = (char)(((c & 0x1F) << 6) | (c2 & 0x3F));
-	                break;
-	            case 14:
-	                /* 1110 xxxx  10xx xxxx  10xx xxxx */
-	                c2 = readNonEOF(is);
-	                c3 = readNonEOF(is);
-	                if (((c2 & 0xC0) != 0x80) || ((c3 & 0xC0) != 0x80)) throw new UTFDataFormatException("malformed input around char " + i);
-	                chars[i]=(char)(((c  & 0x0F) << 12) |
-	                                ((c2 & 0x3F) <<  6) |
-	                                ((c3 & 0x3F) <<  0));
-	                break;
-	            default:
-	                /* 10xx xxxx,  1111 xxxx */
-	                throw new UTFDataFormatException("malformed input around char " + i);
-	        }
-	    }
-	    return String.valueOf(chars);
-	}
-
-	private static void writeSize(int size, OutputStream os) throws IOException {
-		while (size >= 128) {
-			os.write((size & 0x7F) | 0x80);
-			size >>= 7;
-		}
-		os.write(size & 0x7F);
-	}
-
-	private static int readSize(InputStream is) throws IOException {
-		int c = 0;
-		int size = 0;
-		boolean left = true;
-		while (left) {
-			int b = readNonEOF(is);
-			left = (b & 0x80) != 0;
-			b &= 0x7F;
-			b <<= 7 * c;
-			size |= b;
-			c++;
-		}
-		return size;
-	}
-
-	private static int readNonEOF(InputStream is) throws IOException {
-		int c = is.read();
-		if (c == -1) throw new EOFException();
-		return c;
 	}
 
 	/**
@@ -341,15 +165,6 @@ public class InMemoryStorage implements DocumentStorage {
 
 	}
 
-    private static void testCompressionRatio(String[] args) {
-        String text = args[0];
-        int len = text.length();
-        while (len > 10) {
-            test(text, len);
-            len -= 10;
-        }
-    }
-
     private static void testCorrectness(String[] args) throws IOException {
         InMemoryStorage storage = new InMemoryStorage(FileUtil.createTempDir("testInMemoryStorage", ".tmp"), false);
         Document doc1 = new Document();
@@ -371,14 +186,6 @@ public class InMemoryStorage implements DocumentStorage {
         Preconditions.checkState(dd3.equals(doc3), dd3);
     }
 
-    private static void test(String text, int len) {
-        Document d = new Document();
-        d.setField("text", text.substring(0, len));
-        int clen = compress(d).length;
-        len *= 2;
-        System.out.println(String.format("%2.2f = original: %5d - compressed: %5d", 1.0 * clen / len, len, clen));
-    }
-	
     @Override
     public Map<String, String> getStats() {
         HashMap<String, String> stats = Maps.newHashMap();

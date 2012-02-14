@@ -518,7 +518,7 @@ public class IndexEngine {
         
         Option storage  = OptionBuilder.withLongOpt("storage")
                                         .hasArg()
-                                        .withDescription("if present, specifies a storage backend. Options are 'bdb' and 'ram'. Defaults to 'ram'.")
+                                        .withDescription("DEPRECATED! if present, specifies a storage backend. Only 'ram' is supported on command line. USE JSON CONFIGURATION!.")
                                         .create("st");
 
         Options options = new Options();

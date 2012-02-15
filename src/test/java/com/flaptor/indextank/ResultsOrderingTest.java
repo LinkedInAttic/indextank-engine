@@ -21,6 +21,7 @@ import static com.flaptor.util.TestInfo.TestType.SYSTEM;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Random;
 
 import com.flaptor.indextank.index.Document;
@@ -44,7 +45,7 @@ public class ResultsOrderingTest extends IndexTankTestCase {
 	protected void setUp() throws Exception {
         super.setUp();
         this.tempDir = FileUtil.createTempDir("indextank","testcase");
-        this.indexEngine = new IndexEngine(this.tempDir, 11234, 100, false, 5, IndexEngine.SuggestValues.DOCUMENTS, IndexEngine.StorageValues.NO, 0, null, false, "dummyCode", "TEST-environment");
+        this.indexEngine = new IndexEngine(this.tempDir, 11234, 100, false, 5, IndexEngine.SuggestValues.DOCUMENTS, null, false, "dummyCode", "TEST-environment");
 	}
 	
     @Override

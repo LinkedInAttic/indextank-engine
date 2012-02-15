@@ -198,7 +198,7 @@ public class InMemoryStorage extends DocumentBinaryStorage {
     /**
      * A {@link DocumnentStorageFactory} that returns {@link InMemoryStorage} classes.
      */
-    public class Factory implements DocumentStorageFactory {
+    public static class Factory implements DocumentStorageFactory {
 
         /** the KEY for backup directory on the config. it is <b>REQUIRED</b> */
         public final static String DIR = "dir";

@@ -57,7 +57,7 @@ public class IndexEngineTest extends IndexTankTestCase {
 	protected void setUp() throws Exception {
         super.setUp();
         this.tempDir = FileUtil.createTempDir("indextank","testcase");
-        this.indexEngine = new IndexEngine(this.tempDir, 11234, 5, false, 5, IndexEngine.SuggestValues.DOCUMENTS, IndexEngine.StorageValues.NO, 0, null, true, "dummyCode", "TEST-environment");
+        this.indexEngine = new IndexEngine(this.tempDir, 11234, 5, false, 5, IndexEngine.SuggestValues.DOCUMENTS, null, true, "dummyCode", "TEST-environment");
 	}
 
 	private void indexTwelveDocs(BoostingIndexer indexer) {

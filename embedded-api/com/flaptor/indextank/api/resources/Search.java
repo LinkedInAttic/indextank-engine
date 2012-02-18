@@ -62,7 +62,7 @@ public class Search extends Action {
         String fetch = params("fetch");
         String snippet = params("snippet");
         int start = QueryHelper.parseIntParam(params("start"), 0);
-        int len = QueryHelper.parseIntParam(params("end"), 10);
+        int len = QueryHelper.parseIntParam(params("len"), 10);
         int function = QueryHelper.parseIntParam(params("function"), 0);
         Map<Integer, Double> vars = Maps.newHashMap();
         List<CategoryFilter> facetFilters = Lists.newArrayList();

@@ -36,7 +36,7 @@ public class IndexEngineCJKAnalyzer extends CJKAnalyzer {
     }
 
     public static Analyzer buildAnalyzer(Map<Object, Object> configuration) {
-        return new IndexEngineAnalyzer(configuration);
+        return new IndexEngineCJKAnalyzer(configuration);
     }
     
 }

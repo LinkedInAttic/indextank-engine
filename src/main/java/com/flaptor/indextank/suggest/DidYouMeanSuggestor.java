@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.lucene.util.automaton.LevenshteinAutomata;
 
 import com.flaptor.indextank.query.IndexEngineParser;
 import com.flaptor.indextank.query.Query;
 import com.flaptor.indextank.query.QueryNode;
 import com.flaptor.indextank.query.SimplePhraseQuery;
 import com.flaptor.indextank.query.TermQuery;
+import com.flaptor.org.apache.lucene.util.automaton.LevenshteinAutomata;
 import com.flaptor.util.Pair;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -124,7 +124,7 @@ public class DidYouMeanSuggestor {
     private String suggestWord(String term) {
         String bestSuggestion = null;
         if (term.length() > 3) { 
-            org.apache.lucene.util.automaton.Automaton lev = new LevenshteinAutomata(term).toAutomaton(1);
+            com.flaptor.org.apache.lucene.util.automaton.Automaton lev = new LevenshteinAutomata(term).toAutomaton(1);
             LuceneAutomaton levAutomaton = LuceneAutomaton.adapt(lev);
         
             int max = 0;

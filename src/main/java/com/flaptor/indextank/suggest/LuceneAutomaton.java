@@ -20,27 +20,27 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.lucene.util.automaton.Automaton;
 
 import com.flaptor.indextank.util.AbstractIterable;
+import com.flaptor.org.apache.lucene.util.automaton.Automaton;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Ordering;
 
 
 public class LuceneAutomaton extends com.flaptor.indextank.suggest.Automaton {
 	private static class State implements com.flaptor.indextank.suggest.Automaton.State {
-		private org.apache.lucene.util.automaton.State innerState; 
+		private com.flaptor.org.apache.lucene.util.automaton.State innerState; 
 		
-		public State(org.apache.lucene.util.automaton.State innerState) {
+		public State(com.flaptor.org.apache.lucene.util.automaton.State innerState) {
 			this.innerState = innerState;
 		}
 		
 		@Override
 		public Iterable<Transition> getTransitions() {
-			final List<org.apache.lucene.util.automaton.Transition> innerTransitions =
-			    Ordering.from(new Comparator<org.apache.lucene.util.automaton.Transition>() {
+			final List<com.flaptor.org.apache.lucene.util.automaton.Transition> innerTransitions =
+			    Ordering.from(new Comparator<com.flaptor.org.apache.lucene.util.automaton.Transition>() {
 	                @Override
-	                public int compare(org.apache.lucene.util.automaton.Transition o1, org.apache.lucene.util.automaton.Transition o2) {
+	                public int compare(com.flaptor.org.apache.lucene.util.automaton.Transition o1, com.flaptor.org.apache.lucene.util.automaton.Transition o2) {
 	                    return o1.getMin() - o2.getMin();
 	                }
 	            }).sortedCopy(innerState.getTransitions());
@@ -48,9 +48,9 @@ public class LuceneAutomaton extends com.flaptor.indextank.suggest.Automaton {
 			return new AbstractIterable<Transition>() {
 				@Override
 				public Iterator<Transition> iterator() {
-					final Iterator<org.apache.lucene.util.automaton.Transition> iterator = innerTransitions.iterator();
+					final Iterator<com.flaptor.org.apache.lucene.util.automaton.Transition> iterator = innerTransitions.iterator();
 					return new AbstractIterator<Transition>() {
-						private org.apache.lucene.util.automaton.Transition currentTransition = null;
+						private com.flaptor.org.apache.lucene.util.automaton.Transition currentTransition = null;
 						private int lastSymbol;
 						
 						@Override
@@ -102,7 +102,7 @@ public class LuceneAutomaton extends com.flaptor.indextank.suggest.Automaton {
 
 		@Override
 		public com.flaptor.indextank.suggest.Automaton.State step(char symbol) {
-			org.apache.lucene.util.automaton.State step = innerState.step((int)symbol);
+			com.flaptor.org.apache.lucene.util.automaton.State step = innerState.step((int)symbol);
 			if (step != null) {
 				return new State(step);
 			} else {

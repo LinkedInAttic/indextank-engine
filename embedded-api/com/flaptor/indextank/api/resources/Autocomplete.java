@@ -20,6 +20,9 @@ import com.flaptor.indextank.api.IndexEngineApi;
 import com.ghosthack.turismo.action.Action;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.simple.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.logging.Logger;
@@ -43,6 +46,7 @@ public class Autocomplete extends Action {
 
         String query = params("query");
         String field = params("field");
+        String callback = params("callback");
 
         if (field == null || field.isEmpty()) {
             field = "text";
@@ -50,7 +54,15 @@ public class Autocomplete extends Action {
 
         List<String> complete = api.complete(query, field);
 
-        print(complete.toString());
+        JSONObject json = new JSONObject();
+        json.put("query", query);
+        json.put("suggestions", complete);
+
+        if(callback != null && !callback.trim().isEmpty()) {
+          print(callback.trim()+"("+json.toJSONString()+")");
+        } else {
+          print(json.toJSONString());
+        }
 
     }
 

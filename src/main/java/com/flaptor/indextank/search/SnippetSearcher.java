@@ -189,9 +189,10 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
             for (Pair<AToken, Integer> token : window.matches) {
                 escapeAndAppend(buff, text, current, token.first().getStartOffset());
                 buff.append(open);
-                escapeAndAppend(buff, text, token.first().getStartOffset(), token.first().getStartOffset() + token.last());
+                int endOffset = token.first().getEndOffset();
+                escapeAndAppend(buff, text, token.first().getStartOffset(), endOffset);
                 buff.append(close);
-                current = token.first().getStartOffset() + token.last();
+                current = endOffset;
             }
 
             // let subclasses handle where snippets end

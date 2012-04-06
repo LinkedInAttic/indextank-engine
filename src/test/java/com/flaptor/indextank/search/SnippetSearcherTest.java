@@ -28,6 +28,7 @@ import com.flaptor.indextank.IndexTankTestCase;
 import com.flaptor.indextank.index.Document;
 import com.flaptor.indextank.index.IndexEngine;
 import com.flaptor.indextank.query.ParseException;
+import com.flaptor.indextank.query.PrefixTermQuery;
 import com.flaptor.indextank.query.AndQuery;
 import com.flaptor.indextank.query.Query;
 import com.flaptor.indextank.query.TermQuery;
@@ -138,6 +139,38 @@ public class SnippetSearcherTest extends IndexTankTestCase {
         assertTrue("less-than signs not encoded!", sr.getField("snippet_text").contains("&lt;"));
     }
 
+    @TestInfo(testType=UNIT)
+    public void testTokenizingChangesTokenLength() throws IOException, InterruptedException, ParseException {
+        double timestampBoost = System.currentTimeMillis() / 1000.0;
+        String docid = "docid";
+        // \u00df is 'LATIN SMALL LETTER SHARP S'
+        // ASCIIFoldingFilter converts it from 'ß' to 'ss'
+        // see http://www.fileformat.info/info/unicode/char/df/index.htm
+        String text = "Clown Ferdinand und der Fu\u00dfball player";
+        Document doc = new Document(ImmutableMap.of("text", text));
+        indexer.add(docid, doc, (int)timestampBoost, Maps.<Integer, Double>newHashMap());
+
+        String queryText = "fussball";
+        Query query = new Query(new TermQuery("text", queryText), queryText, null);
+
+        SearchResults srs = searcher.search(query, 0, 1, 0, ImmutableMap.of("snippet_fields", "text", "snippet_type", "html"));
+        SearchResult sr = srs.getResults().iterator().next();
+        String snippet = sr.getField("snippet_text");
+        assertNotNull("Snippet is null", snippet);
+        assertTrue("Search term not highlighted", snippet.contains("<b>Fu&szlig;ball</b>"));
+        assertTrue("Snippet lost space before highlighted term", snippet.contains("der "));
+        assertTrue("Snippet lost space after highlighted term: " + snippet, snippet.contains(" player"));
+
+        query = new Query(new PrefixTermQuery("text", "fu"), "fu*", null);
+
+        srs = searcher.search(query, 0, 1, 0, ImmutableMap.of("snippet_fields", "text", "snippet_type", "html"));
+        sr = srs.getResults().iterator().next();
+        snippet = sr.getField("snippet_text");
+        assertNotNull("Snippet is null", snippet);
+        assertTrue("Search term not highlighted", snippet.contains("<b>Fu&szlig;ball</b>"));
+        assertTrue("Snippet lost space before highlighted term", snippet.contains("der "));
+        assertTrue("Snippet lost space after highlighted term", snippet.contains(" player"));
+    }
 
     @TestInfo(testType=UNIT)
     public void testFetchAll() throws IOException, InterruptedException {

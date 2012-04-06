@@ -157,9 +157,8 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
                 String termInText = tokens.get(i).getText();
                 
                 for (String termInQuery : termsForField) {
-                    if (termInQuery.endsWith("*") && termInText.startsWith(termInQuery.substring(0, termInQuery.length() - 1))) { 
-                        matches.add(new Pair<Integer, Integer>(i, termInQuery.length() - 1));
-                    } else if (termInQuery.equals(termInText)) {
+                    if ((termInQuery.endsWith("*") && termInText.startsWith(termInQuery.substring(0, termInQuery.length() - 1))) 
+                            || termInQuery.equals(termInText)) {
                         matches.add(new Pair<Integer, Integer>(i, termInText.length()));
                     }
                 }
@@ -189,9 +188,11 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
             for (Pair<AToken, Integer> token : window.matches) {
                 escapeAndAppend(buff, text, current, token.first().getStartOffset());
                 buff.append(open);
-                escapeAndAppend(buff, text, token.first().getStartOffset(), token.first().getStartOffset() + token.last());
+                int start = token.first().getStartOffset();
+                int endOffset = token.first().getEndOffset();
+                escapeAndAppend(buff, text, start, endOffset);
                 buff.append(close);
-                current = token.first().getStartOffset() + token.last();
+                current = endOffset;
             }
 
             // let subclasses handle where snippets end

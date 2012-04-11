@@ -31,7 +31,6 @@ import com.flaptor.indextank.query.TermQuery;
 import com.flaptor.indextank.storage.alternatives.DocumentStorage;
 import com.flaptor.indextank.util.CharacterTranslator;
 import com.flaptor.util.Execute;
-import com.flaptor.util.Pair;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -151,7 +150,7 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
             List<AToken> tokens = Lists.newArrayList(parser.parseDocumentField(fieldName, text));
             long t2 = System.currentTimeMillis(); 
             logger.debug(String.format("Parsing field %s took %d ms.", fieldName, t2 - t1));
-            List<Pair<Integer, Integer>> matches = Lists.newArrayList();
+            List<Integer> matches = Lists.newArrayList();
             
             for (int i = 0; i < tokens.size(); i++) {
                 String termInText = tokens.get(i).getText();
@@ -159,7 +158,7 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
                 for (String termInQuery : termsForField) {
                     if ((termInQuery.endsWith("*") && termInText.startsWith(termInQuery.substring(0, termInQuery.length() - 1))) 
                             || termInQuery.equals(termInText)) {
-                        matches.add(new Pair<Integer, Integer>(i, termInText.length()));
+                        matches.add(i);
                     }
                 }
             }
@@ -185,11 +184,11 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
 
             // let subclasses handle where snippets start 
             current = adjustStart(current, text);
-            for (Pair<AToken, Integer> token : window.matches) {
-                escapeAndAppend(buff, text, current, token.first().getStartOffset());
+            for (AToken token : window.matches) {
+                escapeAndAppend(buff, text, current, token.getStartOffset());
                 buff.append(open);
-                int start = token.first().getStartOffset();
-                int endOffset = token.first().getEndOffset();
+                int start = token.getStartOffset();
+                int endOffset = token.getEndOffset();
                 escapeAndAppend(buff, text, start, endOffset);
                 buff.append(close);
                 current = endOffset;
@@ -202,21 +201,21 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
             return buff.toString();
         }
         
-        private Window findBestWindow(List<AToken> tokens, List<Pair<Integer, Integer>> matches, int maxSize) {
+        private Window findBestWindow(List<AToken> tokens, List<Integer> matches, int maxSize) {
             if (matches.size() == 0) {
                 return null;
             }
-            List<Pair<AToken, Integer>> mtokens = asTokens(matches, tokens);
-            List<Pair<Integer, Integer>> best = null;
+            List<AToken> mtokens = asTokens(matches, tokens);
+            List<Integer> best = null;
             float bestScore = 0f;
             int left = 0;
             int right = 0;
     		while (right < matches.size()) {
 	    	    right++;
-	            while (mtokens.get(right - 1).first().getEndOffset() - mtokens.get(left).first().getStartOffset() > maxSize) {
+	            while (mtokens.get(right - 1).getEndOffset() - mtokens.get(left).getStartOffset() > maxSize) {
     		    	left++;
 	    	    }
-	            List<Pair<AToken, Integer>> candidate = mtokens.subList(left, right);
+	            List<AToken> candidate = mtokens.subList(left, right);
     		    float score = scoreWindow(candidate);
 	    	    if (score > bestScore) {
 		        	bestScore = score;
@@ -226,9 +225,9 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
             return getWindowContext(tokens, best);
         } 
  
-        private Window getWindowContext(List<AToken> tokens, List<Pair<Integer, Integer>> best) {
-            int left = best.get(0).first();
-            int right = best.get(best.size()-1).first();
+        private Window getWindowContext(List<AToken> tokens, List<Integer> best) {
+            int left = best.get(0);
+            int right = best.get(best.size()-1);
             Window window = new Window();
             window.matches = asTokens(best, tokens);
             window.start = tokens.get(Math.max(0, left - 5)).getStartOffset();
@@ -236,10 +235,10 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
             return window;
         }
         
-        private float scoreWindow(List<Pair<AToken, Integer>> candidate) {
+        private float scoreWindow(List<AToken> candidate) {
             Set<String> terms = Sets.newHashSet();
-            for (Pair<AToken, Integer> token : candidate) {
-                terms.add(token.first().getText());
+            for (AToken token : candidate) {
+                terms.add(token.getText());
             }
             return candidate.size() * terms.size() * terms.size();
         }
@@ -302,11 +301,11 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
     }
 
 
-    private List<Pair<AToken, Integer>> asTokens(List<Pair<Integer, Integer>> matches, final List<AToken> tokens) {
-        return Lists.transform(matches, new Function<Pair<Integer, Integer>, Pair<AToken, Integer>>() {
+    private List<AToken> asTokens(List<Integer> matches, final List<AToken> tokens) {
+        return Lists.transform(matches, new Function<Integer, AToken>() {
             @Override
-            public Pair<AToken, Integer> apply(Pair<Integer, Integer> pair) {
-                return new Pair<AToken, Integer>(tokens.get(pair.first()), pair.last());
+            public AToken apply(Integer pair) {
+                return tokens.get(pair);
             }
         });
     }
@@ -314,7 +313,7 @@ public class SnippetSearcher extends AbstractDocumentSearcher {
     private static class Window {
     	int start;
     	int end;
-        List<Pair<AToken, Integer>> matches = Lists.newArrayList();
+        List<AToken> matches = Lists.newArrayList();
     }
     
     private Set<String> getTermsForField(Set<TermQuery> terms, String fieldName) {

@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;
 
 import com.flaptor.indextank.index.Document;
 import com.flaptor.indextank.storage.alternatives.DocumentStorage;
+import com.flaptor.indextank.storage.alternatives.DocumentStorageFactory;
 import com.flaptor.util.Execute;
 import com.flaptor.util.FileUtil;
 import com.google.common.base.Preconditions;
@@ -191,6 +192,37 @@ public class InMemoryStorage extends DocumentBinaryStorage {
         HashMap<String, String> stats = Maps.newHashMap();
         stats.put("in_memory_storage_count", String.valueOf(compressedMap.size()));
         return stats;
+    }
+
+
+    /**
+     * A {@link DocumnentStorageFactory} that returns {@link InMemoryStorage} classes.
+     */
+    public static class Factory implements DocumentStorageFactory {
+
+        /** the KEY for backup directory on the config. it is <b>REQUIRED</b> */
+        public final static String DIR = "dir";
+        /** the KEY for 'load config from disk on startup' on the config. it is <b>REQUIRED</b> */
+        public final static String LOAD = "load";
+
+        @Override
+        public DocumentStorage fromConfiguration(Map<?, ?> config) {
+            Preconditions.checkNotNull(config);
+            Preconditions.checkState(!config.isEmpty(), "config cannot be empty");
+            Preconditions.checkNotNull(config.get(DIR), "config needs '" + DIR + "' entry");
+            Preconditions.checkNotNull(config.get(DIR), "config needs '" + LOAD + "' entry");
+
+
+            File backupDir = new File( config.get(DIR).toString() );
+            // toString is better than casting to String .. as the value _might_ be a boolean
+            Boolean load = Boolean.valueOf( config.get(LOAD).toString() );
+
+            try { 
+                return new InMemoryStorage(backupDir, load);
+            } catch (IOException ioe) {
+                throw new RuntimeException("while creating InMemoryStorage: " + ioe.getMessage(), ioe);
+            }
+        }
     }
     
 }

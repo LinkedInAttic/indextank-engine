@@ -22,6 +22,7 @@ import static com.flaptor.util.TestInfo.TestType.UNIT;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import com.flaptor.indextank.DocumentStoringIndexer;
 import com.flaptor.indextank.IndexTankTestCase;
@@ -48,7 +49,15 @@ public class SnippetSearcherTest extends IndexTankTestCase {
 	protected void setUp() throws Exception {
         super.setUp();
         this.tempDir = FileUtil.createTempDir("indextank","testcase");
-        this.indexEngine = new IndexEngine(this.tempDir, 11234, 5, false, 5, IndexEngine.SuggestValues.NO, IndexEngine.StorageValues.RAM, 0, null, false, "dummyCode", "TEST-environment");
+        Map<Object, Object> ieConfig = Maps.newHashMap();
+        Map<Object, Object> stConfig = Maps.newHashMap();
+        ieConfig.put("storage", com.flaptor.indextank.index.storage.InMemoryStorage.Factory.class.getName());
+        ieConfig.put("storage_config", stConfig);
+        stConfig.put(com.flaptor.indextank.index.storage.InMemoryStorage.Factory.DIR, this.tempDir.getPath());
+        stConfig.put(com.flaptor.indextank.index.storage.InMemoryStorage.Factory.LOAD, false);
+
+
+        this.indexEngine = new IndexEngine(this.tempDir, 11234, 5, false, 5, IndexEngine.SuggestValues.NO, null, false, "dummyCode", "TEST-environment", ieConfig);
         this.indexer = new DocumentStoringIndexer(indexEngine.getIndexer(), indexEngine.getStorage());
         this.searcher = new SnippetSearcher(indexEngine.getSearcher(), indexEngine.getStorage(), indexEngine.getParser());
 	}

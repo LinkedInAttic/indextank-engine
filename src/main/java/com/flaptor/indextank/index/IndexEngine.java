@@ -113,6 +113,7 @@ public class IndexEngine {
     private static final int DEFAULT_BASE_PORT = 7910;
     private static final int DEFAULT_RTI_SIZE = 1000;
     private static final int DEFAULT_BDB_CACHE = 100;
+    private static final int DEFAULT_MAX_SEARCH_QUEUE_LENGTH = 100;
 
     public static enum SuggestValues { NO, QUERIES, DOCUMENTS};
     public static enum StorageValues { NO, BDB, RAM, CASSANDRA };
@@ -663,7 +664,13 @@ public class IndexEngine {
                 searcher = new DidYouMeanSearcher(searcher, dym);
             }
 
-            searcher = new TrafficLimitingSearcher(searcher);
+            int maxSearchQueueLength = DEFAULT_MAX_SEARCH_QUEUE_LENGTH;
+            if (configuration.containsKey("max_search_queue")) {
+                maxSearchQueueLength = ((Long) configuration.get("max_search_queue")).intValue();
+                logger.info("Using max_search_queue length: " + maxSearchQueueLength);
+            } 
+
+            searcher = new TrafficLimitingSearcher(searcher, maxSearchQueueLength);
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(indexer));
 
             new SearcherServer(searcher, ie.getParser(), ie.boostsManager, ie.scorer, basePort + 2).start();
